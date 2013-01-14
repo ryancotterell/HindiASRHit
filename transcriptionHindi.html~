@@ -1,0 +1,319 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+
+<link type="text/css" href="skin/jplayer.blue.monday.css"
+	rel="stylesheet" />
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+<script src="js/jquery.jplayer.min.js"></script>
+<script src="js/jquery.cookie.js"></script>
+<script
+	src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
+
+<script language="JavaScript" src="http://www.geoplugin.net/javascript.gp" type="text/javascript"></script>
+
+<style>
+
+label { width: 10em; float: left; }
+
+label.error { float: none; color: red; padding-left: .5em; vertical-align: top; }
+p { clear: both; }
+</style>
+
+<script>
+	function gup(paramname) {
+		var regexS = "[\\?&]" + paramname + "=([^&#]*)";
+		var regex = new RegExp(regexS);
+		var tmpURL = decodeURI(window.location.href); // decodeURI to preserve UTF                                                                                                                           
+
+		var results = regex.exec(tmpURL);
+		if (results == null)
+			return "";
+		else
+			return results[1];
+	}
+	function addWorkerInfo(form_name) {
+	
+		$('#' + form_name).append(
+				'<input type="hidden" name="assignmentId" id="assignmentId"/>');
+		$('#' + form_name).append(
+				'<input type="hidden" name="HIT_info" id="HIT_info" />');
+		$('#' + form_name).append(
+				'<input type="hidden" name="workerId" id="workerId" />');
+		$('#' + form_name).append(
+				'<input type="hidden" name="WorkerCity" id="WorkerCity" />');
+		$('#' + form_name)
+				.append(
+						'<input type="hidden" name="WorkerCountry" id="WorkerCountry"/>');
+
+	
+	$('#assignmentId').val(gup('assignmentId'));
+
+		$('#HIT_info').val(gup('HIT_info'));
+		$('#AID').val(gup('workerId'));
+		$('#WorkerCity').val(geoplugin_city());
+		$('#WorkerCountry').val(geoplugin_countryName());
+
+
+	}
+
+	$(document).ready(function() {
+		$("#mturk_form").validate();
+		//to hide the survey
+		if ($.cookie("ccb-hindi-speech") != null) {
+			$("#survey").hide();
+			$('input[name|="is_native_hindi_speaker"]').removeClass("required");
+			$('input[name|="years_speaking_hindi"]').removeClass("required");
+			$('input[name|="is_native_english_speaker"]').removeClass("required");
+			$('input[name|="years_speaking_english"]').removeClass("required");
+			$('input[name|="what_country"]').removeClass("required");
+		}
+		$('#audioId').val(unescape(gup("audioid")));
+	});
+
+	function encodeAndValidate() {
+
+		$.cookie("ccb-hindi-speech", "true");
+
+		$("textarea").each(function(index) {
+			$(this).val(encodeURIComponent($.trim($(this).val())));
+		});
+
+		return true;
+	}
+	
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#jquery_jplayer_1").jPlayer({
+			ready : function() {
+				$(this).jPlayer("setMedia", {
+					wav : unescape(gup("audioid"))
+				});
+			},
+			swfPath : "/js",
+			supplied : "wav"
+		});
+	});
+	//alert(unescape(gup("audioid")));
+</script>
+
+</head>
+
+<body>
+	<div id="mturk-main"
+		style="float: left; width: 60%; padding-right: 10px">
+		<div id="intro">
+			<h2>Transcribe Hindi voice samples</h2>
+			<p>Do you know Hindi? Please help us transcribe and translate
+				these Hindi audio samples for us.</p>
+			<p>Here are some helpful guidelines:</p>
+			<p>
+				1. Please transcribe to the best of your ability and put punctuation
+				where you feel is reasonable.<br /> 2. If you hear laughter or
+				coughing, please indicate it with [laugh] or [cough].<br /> 3. If
+				you hear both Hindi and other languages (like English) just start
+				typing in roman alphabet. Hopefully this won't happen often.<br />
+				4. Optionally, translate the Hindi into English. This is not
+				required, but it is helpful.<br /> 5. You might want to use
+				headphones if the volume of the voice sample is low.<br /> &nbsp;
+			</p>
+		</div>
+
+		<div>
+
+			<form id="mturk_form" method="POST"
+				action="http://www.mturk.com/mturk/externalSubmit" charset="UTF-8">
+
+				<input type="hidden" id="assignmentId" name="assignmentId" value="">
+				
+				<input type="hidden" id="audioId" name="audioId" value="">
+
+				<div id="survey">
+					<p>Before you begin, please answer these questions about your
+						language abilities (you only need to answer these once):</p>
+					<table border="0" cellspacing="4" cellpadding="0">
+						<tbody>
+							<tr>
+								<td>Is Hindi your native language?</td>
+								<td><input type="radio" name="is_native_hindi_speaker"
+									value="yes" class="required" /><span class="answertext">Yes</span> <input
+									type="radio" name="is_native_hindi_speaker" value="no" /><span
+									class="answertext">No</span></td>
+							</tr>
+							<tr>
+								<td>How many years have you spoken Hindi?</td>
+								<td><input size="4" name="years_speaking_hindi" type="text" class="required" />
+									</td>
+							</tr>
+							<tr>
+								<td>Is English your native language?</td>
+								<td><input type="radio" name="is_native_english_speaker"
+									value="yes" class="required" /><span class="answertext">Yes</span> <input
+									type="radio" name="is_native_english_speaker" value="no" /><span
+									class="answertext">No</span></td>
+							</tr>
+							<tr>
+								<td>How many years have you spoken English?</td>
+								<td><input size="4" name="years_speaking_english"
+									type="text" class="required" /></td>
+							</tr>
+							<tr>
+								<td>What country do you live in?</td>
+								<td><input size="15" name="what_country" type="text" class="required" /></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<br /> <br />
+
+				<div id="jquery_jplayer_1" class="jp-jplayer"></div>
+				<div id="jp_container_1" class="jp-audio">
+					<div class="jp-type-single">
+						<div class="jp-gui jp-interface">
+							<ul class="jp-controls">
+								<li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+								<li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+								<li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
+								<li><a href="javascript:;" class="jp-mute" tabindex="1"
+									title="mute">mute</a></li>
+								<li><a href="javascript:;" class="jp-unmute" tabindex="1"
+									title="unmute">unmute</a></li>
+								<li><a href="javascript:;" class="jp-volume-max"
+									tabindex="1" title="max volume">max volume</a></li>
+							</ul>
+							<div class="jp-progress">
+								<div class="jp-seek-bar">
+									<div class="jp-play-bar"></div>
+								</div>
+							</div>
+							<div class="jp-volume-bar">
+								<div class="jp-volume-bar-value"></div>
+							</div>
+							<div class="jp-time-holder">
+								<div class="jp-current-time"></div>
+								<div class="jp-duration"></div>
+								<ul class="jp-toggles">
+									<li><a href="javascript:;" class="jp-repeat" tabindex="1"
+										title="repeat">repeat</a></li>
+									<li><a href="javascript:;" class="jp-repeat-off"
+										tabindex="1" title="repeat off">repeat off</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="jp-no-solution">
+							<span>Update Required</span> To play the media you will need to
+							either update your browser to a recent version or update your <a
+								href="http://get.adobe.com/flashplayer/" target="_blank">Flash
+								plugin</a>.
+						</div>
+					</div>
+				</div>
+
+				<p>
+					If your keyboard cannot type in Hindi, you can use <a
+						href="http://www.google.com/transliterate/hindi"> this link</a>.
+				</p>
+				<p>
+					<b>(Required) Hindi transcription</b> - <span style="color:red"><b>Write in the Hindi
+					alphabet only</b></span>. If they switch to English, continue on with the English
+					alphabet. If they only speak English, please type the English here.
+				</p>
+				<p>
+					<textarea rows="4" cols="100" name="transcription" class="required">  </textarea>
+				</p>
+				<p>
+					<b>(Optional) English translation</b> - if you want to, please
+					translate the Hindi into English.
+				</p>
+				<p>
+					<textarea rows="4" cols="100" name="translation">  </textarea>
+				</p>
+				<p>Was the audio clear?</p>
+				<p>
+					<input type="radio" name="is_clear" value="y" />Yes <input
+						type="radio" name="is_clear" value="n" /> No
+				</p>
+				<p>What language was the person speaking?</p>
+				<p>
+					<input type="radio" name="lang" value="ara" /> Hindi <br /> <input
+						type="radio" name="lang" value="eng" /> English <br /> <input
+						type="radio" name="lang" value="ara_eng" /> Hindi AND English <br />
+					<input type="radio" name="lang" value="other" /> Other language
+				</p>
+				<p>Please provide any comments that you have about this HIT. We
+					appreciate your input!</p>
+				<p>
+					<textarea name="comment" cols="80" rows="4"> </textarea>
+				</p>
+				<p>
+					<input type="hidden" name="userDisplayLanguage" /> <input
+						type="hidden" name="browserInfo" /> <input type="hidden"
+						name="ipAddress" /> <input type="hidden" name="country" /> <input
+						type="hidden" name="city" /> <input type="hidden" name="region" />
+				</p>
+				<input type="submit" onClick="encodeAndValidate();" />
+
+			</form>
+		</div>
+	</div>
+
+	<div id="consent-text"
+		style="margin-left: 3px; overflow: hidden; border: 1px solid #000; padding-left: 20px; padding-right: 20px">
+		<span style="text-align: center;"><h3>Informed Consent
+				Form</h3></span>
+		<p>
+			<b>Purpose of research study:</b> We are collecting transcriptions of
+			audio files for our research into human language technologies.
+		</p>
+		<p>
+			<b>Benefits:</b> Although it will not directly benefit you, this
+			study may benefit society by improving how computers process human
+			languages. This could lead to better translation software, improved
+			web searching, or new user interfaces for computers and mobile
+			devices.
+		</p>
+		<p>
+			<b>Risks:</b>There are no risks for participating in this study.
+		</p>
+		<p>
+			<b>Voluntary participation:</b>You may stop participating at any time
+			without penalty by clicking on the &ldquo;Return HIT&rdquo; button,
+			or closing your browser window.
+		</p>
+		<p>
+			<b>We may end your participation if</b> you do not have adequate
+			knowledge of the language, or you are not following the instructions,
+			or your answers significantly deviate from known translations.
+		</p>
+		<p>
+			<b>Confidentiality: </b>The only identifying information kept about
+			you will be a WorkerID serial number and your IP address. This
+			information may be disclosed to other researchers.
+		</p>
+		<p>
+			<b>Questions/concerns: </b>You may e-mail questions to the principle
+			investigator, <a target="_blank" href="http://cs.jhu.edu/~ccb/">Chris
+				Callison-Burch</a>. If you feel you have been treated unfairly you may
+			contact the Johns Hopkins University <a target="_blank"
+				href="http://web.jhu.edu/Homewood-IRB/contact.html">Institutional
+				Review Board</a>.
+		</p>
+		<p>
+			<b>Clicking on the &ldquo;Accept HIT&rdquo; button</b> indicates that
+			you understand the information in this consent form. You have not
+			waived any legal rights you otherwise would have as a participant in
+			a research study.
+		</p>
+	</div>
+
+	<script>
+
+	        addWorkerInfo('mturk_form');
+		document.getElementById('assignmentId').value = gup('assignmentId');
+	</script>
+</body>
+</html>
